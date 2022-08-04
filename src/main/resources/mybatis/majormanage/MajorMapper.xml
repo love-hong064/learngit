@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.majormanage.major.mapper.MajorMapper">
+
+    <resultMap id="MajorResult" type="Major">
+        <id     property="majorId"        column="major_id"         />
+        <result property="majorName"     column="major_name"      />
+        <result property="deScp"      column="dscp"       />
+        <result property="remark"      column="remark"       />
+        <result property="createTime"    column="create_time"/>
+    </resultMap>
+    <select id="selectMajorList" parameterType="Major" resultMap="MajorResult">
+        select major_id,major_name,dscp,remark,create_time
+        from x_major
+        <where>
+            1=1
+            <if test="majorId != null and majorId != 0">
+                AND major_id = #{majorId}
+            </if>
+            <if test="majorName != null and majorName != ''">
+                AND major_name like concat('%', #{majorName}, '%')
+            </if>
+            <if test="deScp != null and deScp != ''">
+                AND dscp = #{deScp}
+            </if>
+            <if test="remark != null and remark != ''">
+                AND remark like concat('%', #{remark}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="checkMajorNameUnique" parameterType="String" resultType="int">
+        select count(1) from x_major where major_name = #{majorName} limit 1
+    </select>
+    <insert id="insertMajor" parameterType="Major" useGeneratedKeys="true" keyProperty="majorId">
+        insert into x_major
+        values(
+        #{majorId},
+        <if test="majorName != null and majorName != ''">#{majorName},</if>
+        #{deScp},#{remark},#{createTime})
+    </insert>
+</mapper>

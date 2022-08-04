@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.project.majormanage.student.mapper.StudentMapper">
+    <resultMap id="StudentResult" type="Student">
+        <id     property="stuId"        column="sno"         />
+        <result property="majorId"     column="major_id"      />
+        <result property="stuName"      column="sname"       />
+        <result property="stuAge"      column="sage"       />
+        <result property="stuSex"    column="ssex"/>
+        <result property="inYear"    column="inyear"/>
+    </resultMap>
+    <select id="selectStuByMajorId" parameterType="Integer" resultMap="StudentResult">
+        select sno,sname,sage,ssex,inyear
+        from x_student
+        where major_id = #{majorId}
+    </select>
+    <select id="selectStudentList" parameterType="Student" resultMap="StudentResult">
+        select sno,major_id,sname,sage,ssex,inyear
+        from x_student
+                <where>
+                    1=1
+                    <if test="majorId != null and majorId != 0">
+                        AND major_id = #{majorId}
+                    </if>
+                    <if test="stuId != null and stuId != ''">
+                        AND sno like concat('%', #{stuId}, '%')
+                    </if>
+                    <if test="stuName != null and stuName != ''">
+                        AND sname like concat('%', #{stuName}, '%')
+                    </if>
+                    <if test="stuAge != null">
+                        AND sage = #{stuAge}
+                    </if>
+                    <if test="stuSex != null and stuSex != ''">
+                        AND ssex = #{stuSex}
+                    </if>
+                    <if test="inYear != null and inYear != ''">
+                        AND inyear like concat('%', #{inYear}, '%')
+                    </if>
+                </where>
+    </select>
+    <insert id="insertStudent" parameterType="Student" useGeneratedKeys="true" keyProperty="stuId">
+        insert into x_student
+        values(
+        #{stuId},
+        <if test="majorId != null">#{majorId},</if>
+        <if test="stuName != null and stuName != ''">#{stuName},</if>
+        <if test="stuAge != null">#{stuAge},</if>
+        #{stuSex},#{inYear}
+        )
+    </insert>
+    <select id="selectstuByYearMajorId" parameterType="Student" resultMap="StudentResult">
+        select sno,major_id,sname,sage,ssex,inyear from x_student
+        where major_id = #{majorId} and inyear = #{inYear}
+        order by sno desc limit 1
+    </select>
+</mapper>

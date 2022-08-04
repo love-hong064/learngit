@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('添加学生信息')"/>
+    <th:block th:include="include :: datetimepicker-css" />
+    <style>
+        .col-sm-12{
+            width: 90%;
+        }
+        .col-sm-6{
+            width: 45%;
+        }
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        /* 在Chrome浏览器下 */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        /* 在Firefox浏览器下 */
+        input[type="number"]{
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-student-add">
+        <h4 class="form-header h4" style="margin-bottom: 15px;">学生信息</h4>
+        <div style="width: 80%;margin-left: 10%;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <span style="display: inline-block;margin-left: 3%;font-size: 16px;color: #ddad7b;">基础信息</span><br/>
+                    <hr/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label is-required">姓名：</label>
+                        <div class="col-sm-8">
+                            <input id="stuName" name="stuName" placeholder="请输入学生姓名" class="form-control" type="text" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">专业：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" id="majorName" name="majorName" readonly="true" th:value="${majorName}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">年龄：</label>
+                        <div class="col-sm-8">
+                            <input name="stuAge" placeholder="请输入学生年龄" class="form-control" type="number">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">性别：</label>
+                        <div class="col-sm-8">
+                            <select name="stuSex" class="form-control m-b" th:with="type=${@dict.getType('majormanage_student_sex')}">
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label is-required">入学年份：</label>
+                        <div class="col-sm-8">
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input name="inYear" placeholder="请选择入学年份" class="form-control time-input"
+                                       data-type="year" data-format="yyyy" required type="number" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i
+                class="fa fa-check"></i>保 存
+        </button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                class="fa fa-reply-all"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var editFlag = ''
+    var removeFlag = ''
+    var resetPwdFlag = ''
+    var prefix = ctx + "majormanage/student";
+
+    $("#form-student-add").validate({
+        onkeyup: false,
+        rules: {
+            stuName: {
+                minlength: 2,
+                maxlength: 20,
+            },
+        },
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            var data = $("#form-student-add").serializeArray();
+            $.operate.saveTab(prefix + "/add/"+[[${majorId}]], data);
+        }else{
+            $.modal.alertWarning("请检查必填项");
+        }
+    }
+
+</script>
+</body>
+</html>
